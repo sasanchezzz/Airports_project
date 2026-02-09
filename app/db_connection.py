@@ -10,8 +10,8 @@ from app.config.settings import settings
 
 
 db_engine = create_async_engine(
-    url=settings.DB_URL, #type: ignore
-    echo=settings.DB_ECHO,
+    url=settings.get_dsn(), #type: ignore
+    echo=True,
 )
 
 Async_session_local = async_sessionmaker(
