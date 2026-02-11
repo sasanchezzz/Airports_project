@@ -9,10 +9,10 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from app.db_connection import get_db
 from app.models.models import Aircrafts, Airports, Flights
 from app.schemas.flights import (
-    FlightsQP,
     FlightsRequestJoin,
     FlightsResponse,
     FlightsResponseItem,
+    QPFlights,
 )
 
 
@@ -24,7 +24,7 @@ flights_router = APIRouter(
 
 @flights_router.get("/", response_model=Page[FlightsResponse])
 async def get_airports(
-    query: FlightsQP = Depends(),
+    query: QPFlights = Depends(),
     session: AsyncSession = Depends(get_db),
     pagination_params: Params = Depends(),
 ) -> Page[FlightsResponse]:

@@ -1,11 +1,17 @@
 from pydantic import BaseModel
 
 
-class BoardingPassesRequest(BaseModel):
-    ticket_no: str
-
-
 class BoardingPassesResponse(BaseModel):
-    flight_id: int | None = None
-    boarding_no: int | None = None
+    """
+    Модель ответа для таблицы boarding_passes
+
+    Attributes:
+        flight_id: int - Уникальный ID рейса
+
+        boarding_no: int - Номер посадочного талона
+
+        seat_no: str - Номер места в самолете, пример: "7A"
+    """
+    flight_id: int
+    boarding_no: int
     seat_no: str

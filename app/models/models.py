@@ -19,7 +19,9 @@ from app.models.base import Base
 
 
 class Aircrafts(Base):
-
+    """
+    Алхимия-модель для таблицы aircrafts из схемы bookings
+    """
     __tablename__ = "aircrafts"
 
     aircraft_code: Mapped[str] = mapped_column(
@@ -41,7 +43,9 @@ class Aircrafts(Base):
 
 
 class Airports(Base):
-
+    """
+    Алхимия-модель для таблицы airports из схемы bookings
+    """
     __tablename__ = "airports"
 
     airport_code: Mapped[str] = mapped_column(
@@ -67,7 +71,9 @@ class Airports(Base):
 
 
 class Bookings(Base):
-
+    """
+    Алхимия-модель для таблицы bookings из схемы bookings
+    """
     __tablename__ = "bookings"
 
     book_ref: Mapped[str] = mapped_column(
@@ -91,7 +97,9 @@ class Bookings(Base):
 
 
 class Seats(Base):
-
+    """
+    Алхимия-модель для таблицы seats из схемы bookings
+    """
     __tablename__ = "seats"
 
     aircraft_code: Mapped[str] = mapped_column(
@@ -117,7 +125,9 @@ class Seats(Base):
 
 
 class Flights(Base):
-
+    """
+    Алхимия-модель для таблицы flights из схемы bookings
+    """
     __tablename__ = "flights"
 
     flight_id: Mapped[int] = mapped_column(
@@ -183,7 +193,9 @@ class Flights(Base):
 
 
 class Tickets(Base):
-
+    """
+    Алхимия-модель для таблицы tickets из схемы bookings
+    """
     __tablename__ = "tickets"
 
     ticket_no: Mapped[str] = mapped_column(
@@ -217,7 +229,9 @@ class Tickets(Base):
 
 
 class TicketFlights(Base):
-
+    """
+    Алхимия-модель для таблицы ticketflights из схемы bookings
+    """
     __tablename__ = "ticket_flights"
 
     ticket_no: Mapped[str] = mapped_column(
@@ -256,7 +270,9 @@ class TicketFlights(Base):
 
 
 class BoardingPasses(Base):
-
+    """
+    Алхимия-модель для таблицы boardingpasses из схемы bookings
+    """
     __tablename__ = "boarding_passes"
 
     ticket_no: Mapped[str] = mapped_column(
