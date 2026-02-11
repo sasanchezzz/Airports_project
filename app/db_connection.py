@@ -10,7 +10,7 @@ from app.config.settings import settings
 
 
 db_engine = create_async_engine(
-    url=settings.get_dsn(), #type: ignore
+    url=settings.get_dsn,
     echo=True,
 )
 

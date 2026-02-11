@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from fastapi_pagination import Page, Params
+from fastapi_pagination.ext.sqlalchemy import paginate
+
 from app.db_connection import get_db
 from app.models.models import Seats
-from app.schemas.seats import SeatsResponse
+from app.schemas.seats import QPSeats, SeatsResponse
 
 
 seats_router = APIRouter(
@@ -12,23 +15,28 @@ seats_router = APIRouter(
     tags=["v2/seats"],
 )
 
-@seats_router.get("/{seat_no}", response_model=SeatsResponse)
-async def get_seat_info(
-    seat_no: str,
+@seats_router.get("/", response_model=Page[SeatsResponse])
+async def get_airports(
+    query: QPSeats = Depends(),
     session: AsyncSession = Depends(get_db),
-) -> Seats:
-    stmt = (
-        select(Seats).
-        where(Seats.seat_no == seat_no)
-    )
+    pagination_params: Params = Depends(),
+) -> Page[SeatsResponse]:
+    query_conditions = query.compose_conditions(Seats)
 
-    res = await session.execute(stmt)
+    stmt = select(Seats).where(*query_conditions)
 
-    result_get_seat_info = res.scalar_one_or_none()
+    get_airports_result: Page[
+        SeatsResponse
+    ] = await paginate(
+        session,
+        stmt,
+        pagination_params,
+        )
+    return get_airports_result
 
-    if result_get_seat_info is None:
-        raise HTTPException(
-                status_code=404,
-                detail="Seat with {seat_no} number not found"
-            )
-    return result_get_seat_info
+    # if result_get_seat_info is None:
+    #     raise HTTPException(
+    #             status_code=404,
+    #             detail=f"Seat with number - {seat_no} not found"
+    #         )
+    # return get_seats_result

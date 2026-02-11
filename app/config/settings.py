@@ -1,6 +1,3 @@
-# from functools import cached_property
-
-import os
 from pydantic_settings import (
     BaseSettings,
     SettingsConfigDict,
@@ -17,12 +14,13 @@ class DatabaseSettings(BaseSettings):
         extra="ignore",
     )
 
-    DB_HOST: str
-    DB_PORT: int
-    DB_NAME: str
-    DB_USER: str
-    DB_PASSWORD: str
+    DB_HOST: str = "localhost"
+    DB_PORT: int = 55432
+    DB_NAME: str = "demo"
+    DB_USER: str = "postgres"
+    DB_PASSWORD: str = "5621"
 
+    @property
     def get_dsn(self) -> str:
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 

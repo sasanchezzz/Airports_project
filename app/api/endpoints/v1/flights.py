@@ -8,7 +8,12 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 
 from app.db_connection import get_db
 from app.models.models import Aircrafts, Airports, Flights
-from app.schemas.flights import FlightsQP, FlightsRequestJoin, FlightsResponse, FlightsResponseItem
+from app.schemas.flights import (
+    FlightsQP,
+    FlightsRequestJoin,
+    FlightsResponse,
+    FlightsResponseItem,
+)
 
 
 flights_router = APIRouter(
@@ -29,7 +34,7 @@ async def get_airports(
 
     get_airports_result: Page[
         FlightsResponse
-        ] = await paginate(
+    ] = await paginate(
         session,
         stmt,
         pagination_params,
@@ -81,8 +86,8 @@ async def get_city_flights(
         Aircrafts.model,
     )
     .join(Aircrafts)
-    .join(DeparureAirport, Flights.FK_Flights_departure_airport)
-    .join(ArrivalAirport, Flights.FK_Flights_arrival_airport)
+    .join(DeparureAirport, Flights.departure_airport_rel)
+    .join(ArrivalAirport, Flights.arrival_airport_rel)
     .where(*conditions)
     )
 
