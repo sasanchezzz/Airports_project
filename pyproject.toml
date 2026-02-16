@@ -23,7 +23,7 @@ strict = true
 exclude = ["venv", ".venv", "alembic"]
 
 [tool.ruff]
-line-length = 120  # Устанавливаем максимальную длину строки в 120 символов
+line-length = 70  # Устанавливаем максимальную длину строки в 120 символов
 target-version = "py310"
 exclude = ["venv", ".venv", "alembic"]
 

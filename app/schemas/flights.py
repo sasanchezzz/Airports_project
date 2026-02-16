@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -29,6 +29,7 @@ class QPFlights(ConditionsMixin):
 
         actual_arrival: datetime | None - Действительные дата и время прибытия, пример: 2012-01-01 15:30:00+00
     """
+
     flight_no: str | None = None
     scheduled_departure: datetime | None = None
     scheduled_arrival: datetime | None = None
@@ -64,6 +65,7 @@ class FlightsResponse(BaseModel):
 
         actual_arrival: datetime - Действительные дата и время прибытия, пример: 2012-01-01 15:30:00+00
     """
+
     flight_id: int
     flight_no: str
     scheduled_departure: datetime
@@ -92,6 +94,7 @@ class FlightsRequestJoin(BaseModel):
 
         range: int | None - Максимальная дальность полета самолета в километрах
     """
+
     flight_no: str | None = None
     departure_city: str | None = None
     arrival_city: str | None = None
@@ -121,6 +124,7 @@ class FlightsResponseItem(ConditionsMixin):
 
         model: str - Модель самолета
     """
+
     flight_no: str
     aircraft_code: str
     departure_airport: str
@@ -130,3 +134,28 @@ class FlightsResponseItem(ConditionsMixin):
     status: str
     range: int
     model: str
+
+
+class FlightsAnalyticsRequest(BaseModel):
+    date_from: date
+    date_to: date
+
+
+class PeriodDate(BaseModel):
+    from_date: date
+    to_date: date
+
+
+class TopRouteItem(BaseModel):
+    route: str
+    departure_city: str
+    arrival_city: str
+    flights_count: int
+    passengers: int
+    avg_load_factor: float
+    revenue: float
+
+
+class TopRouteResponse(ConditionsMixin):
+    period: list[PeriodDate]
+    top_routes: list[TopRouteItem]

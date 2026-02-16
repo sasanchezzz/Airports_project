@@ -16,13 +16,13 @@ from app.schemas.flights import (
 )
 
 
-flights_router = APIRouter(
+v1_flights_router = APIRouter(
     prefix="/flights",
     tags=["v1/flights"],
 )
 
 
-@flights_router.get("/", response_model=Page[FlightsResponse])
+@v1_flights_router.get("/", response_model=Page[FlightsResponse])
 async def get_airports(
     query: QPFlights = Depends(),
     session: AsyncSession = Depends(get_db),
@@ -32,16 +32,17 @@ async def get_airports(
 
     stmt = select(Flights).where(*query_conditions)
 
-    get_airports_result: Page[
-        FlightsResponse
-    ] = await paginate(
+    get_airports_result: Page[FlightsResponse] = await paginate(
         session,
         stmt,
         pagination_params,
-        )
+    )
     return get_airports_result
 
-@flights_router.get("/city_flights", response_model=Page[FlightsResponseItem])
+
+@v1_flights_router.get(
+    "/city_flights", response_model=Page[FlightsResponseItem]
+)
 async def get_city_flights(
     query: FlightsRequestJoin = Depends(),
     session: AsyncSession = Depends(get_db),
@@ -53,49 +54,37 @@ async def get_city_flights(
 
     conditions = []
     if query.flight_no:
-        conditions.append(
-            Flights.flight_no == query.flight_no
-        )
+        conditions.append(Flights.flight_no == query.flight_no)
     if query.departure_city:
         conditions.append(
             DeparureAirport.city == query.departure_city
         )
     if query.arrival_city:
-        conditions.append(
-            ArrivalAirport.city == query.arrival_city
-        )
+        conditions.append(ArrivalAirport.city == query.arrival_city)
     if query.status:
-        conditions.append(
-            Flights.status == query.status
-        )
+        conditions.append(Flights.status == query.status)
     if query.range:
-        conditions.append(
-            AircraftsRange.range == query.range
-        )
+        conditions.append(AircraftsRange.range == query.range)
 
     stmt = (
-    select(
-        Flights.flight_no,
-        Flights.aircraft_code,
-        Flights.departure_airport,
-        DeparureAirport.city.label("departure_city"),
-        Flights.arrival_airport,
-        ArrivalAirport.city.label("arrival_city"),
-        Flights.status,
-        Aircrafts.range,
-        Aircrafts.model,
-    )
-    .join(Aircrafts)
-    .join(DeparureAirport, Flights.departure_airport_rel)
-    .join(ArrivalAirport, Flights.arrival_airport_rel)
-    .where(*conditions)
+        select(
+            Flights.flight_no,
+            Flights.aircraft_code,
+            Flights.departure_airport,
+            DeparureAirport.city.label("departure_city"),
+            Flights.arrival_airport,
+            ArrivalAirport.city.label("arrival_city"),
+            Flights.status,
+            Aircrafts.range,
+            Aircrafts.model,
+        )
+        .join(Aircrafts)
+        .join(DeparureAirport, Flights.departure_airport_rel)
+        .join(ArrivalAirport, Flights.arrival_airport_rel)
+        .where(*conditions)
     )
 
-    query_result: Page[
-        FlightsResponseItem
-        ] = await paginate(
-            session,
-            stmt,
-            pagination_params
-        )
+    query_result: Page[FlightsResponseItem] = await paginate(
+        session, stmt, pagination_params
+    )
     return query_result
