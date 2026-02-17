@@ -10,12 +10,13 @@ from app.models.models import Seats
 from app.schemas.seats import QPSeats, SeatsResponse
 
 
-seats_router = APIRouter(
+v2_seats_router = APIRouter(
     prefix="/seats",
     tags=["v2/seats"],
 )
 
-@seats_router.get("/", response_model=Page[SeatsResponse])
+
+@v2_seats_router.get("/", response_model=Page[SeatsResponse])
 async def get_airports(
     query: QPSeats = Depends(),
     session: AsyncSession = Depends(get_db),
@@ -25,13 +26,11 @@ async def get_airports(
 
     stmt = select(Seats).where(*query_conditions)
 
-    get_airports_result: Page[
-        SeatsResponse
-    ] = await paginate(
+    get_airports_result: Page[SeatsResponse] = await paginate(
         session,
         stmt,
         pagination_params,
-        )
+    )
     return get_airports_result
 
     # if result_get_seat_info is None:
