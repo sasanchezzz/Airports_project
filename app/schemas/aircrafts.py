@@ -29,6 +29,17 @@ class AircraftResponse(BaseModel):
 
 
 class AircraftCreate(BaseModel):
+    """
+    Модель для создания записи для таблицы aircrafts
+
+    Attributes:
+        aircraft_code: str - Уникальный код самолета, пример: "CN1" или "773"
+
+        model: AircraftModelType (enum) - Модель самолета, пример: "Boeing 777-300"
+
+        range: int - Максимальная дальность полета самолета в километрах
+    """
+
     aircraft_code: str
     model: AircraftModelType
     range: int
@@ -71,7 +82,7 @@ class AircraftCreate(BaseModel):
                 return cls.check_aircraft_code(str_value, handler)
             if isinstance(value, str) and value.islower():
                 return cls.check_aircraft_code(value.upper(), handler)
-            raise ValueError(f"Error: Invalid aircraft_code: {err}")
+            raise ValueError(f"Invalid aircraft_code: {err}")
 
     @field_validator("range", mode="before")
     @classmethod

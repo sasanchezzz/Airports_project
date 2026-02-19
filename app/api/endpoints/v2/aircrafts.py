@@ -56,23 +56,19 @@ async def create_aircraft(
 @v2_aircrafts_router.delete("/{aircraft_code}", response_model=dict)
 async def delete_aircraft(
     aircraft_code: str, session: AsyncSession = Depends(get_db)
-) -> str:
-    stmt = await session.execute(
-        select(Aircrafts).where(
-            Aircrafts.aircraft_code == aircraft_code
-        )
-    )
+) -> dict[str, str]:
+    stmt = await session.get(Aircrafts, aircraft_code)
 
-    res_stmt = stmt.scalars().one()
-
-    if res_stmt is None:
+    if stmt is None:
         raise HTTPException(
             status_code=404,
             detail=f"Aircraft with code {aircraft_code} not found",
         )
 
-    session.delete(res_stmt)
+    await session.delete(stmt)
 
     await session.commit()
 
-    return f"Aircraft {Aircrafts.model} deleted successfully"
+    return {
+        "message": f"Aircraft {aircraft_code} deleted successfully"
+    }

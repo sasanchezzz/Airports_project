@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class AircraftModelType(StrEnum):
+class AircraftModelType(str, Enum):
     airbus_319 = "Airbus A319-100"
     airbus_320 = "Airbus A320-200"
     airbus_321 = "Airbus A321-200"
@@ -14,6 +14,8 @@ class AircraftModelType(StrEnum):
     cessna_208 = "Cessna 208 Caravan"
     bombardier_200 = "Bombardier CRJ-200"
     sukhoi_100 = "Sukhoi SuperJet-100"
-    mc_21 = "МС-21"
+    mc_21_2 = "МС-21-200"
+    mc_21_3 = "МС-21-310"
+    mc_21_4 = "МС-21-400"
     ty_204 = "Ту-204-100"
     ty_214 = "Ту-214-200"
