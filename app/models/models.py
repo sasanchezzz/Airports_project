@@ -1,3 +1,5 @@
+import random
+
 from datetime import datetime
 
 from sqlalchemy import (
@@ -18,10 +20,30 @@ from sqlalchemy.orm import (
 from app.models.base import Base
 
 
+def generate_ticket_no() -> str:
+    """Генерирует 13-значный номер билета"""
+    now = datetime.now()
+    year = now.strftime("%y")
+    day_of_year = now.strftime("%j").zfill(3)
+    random_digits = "".join(
+        [str(random.randint(0, 9)) for _ in range(8)]
+    )
+    return f"{year}{day_of_year}{random_digits}"
+
+
+def generate_book_ref() -> str:
+    """Генерирует 6-символьный код бронирования"""
+    import string
+
+    characters = string.ascii_uppercase + string.digits
+    return "".join(random.choices(characters, k=6))
+
+
 class Aircrafts(Base):
     """
     Алхимия-модель для таблицы aircrafts из схемы bookings
     """
+
     __tablename__ = "aircrafts"
 
     aircraft_code: Mapped[str] = mapped_column(
@@ -46,6 +68,7 @@ class Airports(Base):
     """
     Алхимия-модель для таблицы airports из схемы bookings
     """
+
     __tablename__ = "airports"
 
     airport_code: Mapped[str] = mapped_column(
@@ -74,6 +97,7 @@ class Bookings(Base):
     """
     Алхимия-модель для таблицы bookings из схемы bookings
     """
+
     __tablename__ = "bookings"
 
     book_ref: Mapped[str] = mapped_column(
@@ -100,6 +124,7 @@ class Seats(Base):
     """
     Алхимия-модель для таблицы seats из схемы bookings
     """
+
     __tablename__ = "seats"
 
     aircraft_code: Mapped[str] = mapped_column(
@@ -128,6 +153,7 @@ class Flights(Base):
     """
     Алхимия-модель для таблицы flights из схемы bookings
     """
+
     __tablename__ = "flights"
 
     flight_id: Mapped[int] = mapped_column(
@@ -196,6 +222,7 @@ class Tickets(Base):
     """
     Алхимия-модель для таблицы tickets из схемы bookings
     """
+
     __tablename__ = "tickets"
 
     ticket_no: Mapped[str] = mapped_column(
@@ -212,7 +239,9 @@ class Tickets(Base):
         String(20),
         nullable=False,
     )
-    passenger_name: Mapped[str] = mapped_column(nullable=False,)
+    passenger_name: Mapped[str] = mapped_column(
+        nullable=False,
+    )
     contact_data: Mapped[dict[str, str]] = mapped_column(
         JSONB,
         default=dict,
@@ -232,6 +261,7 @@ class TicketFlights(Base):
     """
     Алхимия-модель для таблицы ticketflights из схемы bookings
     """
+
     __tablename__ = "ticket_flights"
 
     ticket_no: Mapped[str] = mapped_column(
@@ -273,6 +303,7 @@ class BoardingPasses(Base):
     """
     Алхимия-модель для таблицы boardingpasses из схемы bookings
     """
+
     __tablename__ = "boarding_passes"
 
     ticket_no: Mapped[str] = mapped_column(
