@@ -65,13 +65,13 @@ class AircraftCreate(BaseModel):
             valid_value = handler(value)
 
             if not isinstance(valid_value, str):
-                raise ValueError(f"Aircraft_code must be a string")
+                raise ValueError("Aircraft_code must be a string")
 
             valid_value = valid_value.upper()
 
             if not re.match(r"^[A-Z0-9]+$", valid_value):
                 raise ValueError(
-                    f"Aircraft_code must contain numbers or uppercase english letters, example: 123, 1A1, ABC"
+                    "Aircraft_code must contain numbers or uppercase english letters, example: 123, 1A1, ABC"
                 )
 
             return valid_value
@@ -115,3 +115,36 @@ class AircraftCreate(BaseModel):
             )
 
         return value
+
+
+class AircraftRangePatch(BaseModel):
+    range: int
+
+    @field_validator("range", mode="before")
+    @classmethod
+    def validate_range(cls, value: Any) -> int:
+        """
+        Валидатор для поля range
+        """
+        match value:
+            case int(num) if 1000 <= num <= 19000:
+                return num
+            case int(num) if num < 1000:
+                raise ValueError(
+                    f"Range value must be more than 1000, got {num}"
+                )
+            case int(num) if num > 19000:
+                raise ValueError(
+                    f"Range value must be less than 19000, got {num}"
+                )
+            case str(s):
+                try:
+                    return cls.validate_range(int(s))
+                except ValueError:
+                    raise ValueError(
+                        f"Range must be a number, got string '{s}'"
+                    )
+            case float(f):
+                return cls.validate_range(int(f))
+            case _:
+                raise ValueError("Range must be a number")
