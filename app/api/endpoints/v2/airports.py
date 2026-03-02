@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db_connection import get_db
 from app.models.models import Airports
 from app.schemas.airports import (
-    AirportsResponse,
     AirportsUpsert,
     AirportsUpsertResponse,
 )
