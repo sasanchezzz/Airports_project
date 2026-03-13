@@ -326,6 +326,7 @@ class BoardingPasses(Base):
 
     ticket_flight: Mapped["TicketFlights"] = relationship(
         "TicketFlights",
-        foreign_keys="BoardingPasses.ticket_no",
+        # foreign_keys="BoardingPasses.ticket_no",
+        foreign_keys=[ticket_no, flight_id],
         back_populates="boarding_passes",
     )

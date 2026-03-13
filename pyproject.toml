@@ -8,7 +8,6 @@ dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",
     "dotenv>=0.9.9",
-    "factory-boy>=3.3.3",
     "fastapi>=0.128.0",
     "fastapi-pagination>=0.15.7",
     "pydantic-settings>=2.12.0",
@@ -21,7 +20,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff<1.0.0,>=0.2.2", "mypy<2.0.0,>=1.8.0", "types-pyyaml>=6.0.12.20250915", "black>=25.1.0", "pre-commit<4.0.0,>=3.6.2"]
+dev = ["ruff<1.0.0,>=0.2.2", "mypy<2.0.0,>=1.8.0", "black>=25.1.0", "pre-commit<4.0.0,>=3.6.2"]
 test = ["pytest<8.0.0,>=7.4.3", "coverage<8.0.0,>=7.4.3"]
 
 [tool.mypy]
@@ -30,6 +29,8 @@ exclude = ["venv", ".venv", "alembic"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
+pythonpath = ["."]
+python_classes = ["Test*"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
