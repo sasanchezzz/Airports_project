@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: airtransportation_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-5621}
+      POSTGRES_DB: ${DB_NAME:-demo}
+    ports:
+      - "55432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - airtransportation_network
+
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: aviation_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=demo
+      - DB_USER=postgres
+      - DB_PASSWORD=5621
+      - DATABASE_URL=postgresql+asyncpg://postgres:5621@db:5432/demo
+      - PYTHONPATH=/app
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-True}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - airtransportation_network
+
+volumes:
+  postgres_data:
+    name: airtransportation_data
+
+networks:
+  airtransportation_network:
+    name: airtransportation_network
+    driver: bridge
