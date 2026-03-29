@@ -1,57 +1,67 @@
 services:
   db:
     image: postgres:15-alpine
-    container_name: airtransportation_db
+    container_name: my_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-5621}
-      POSTGRES_DB: ${DB_NAME:-demo}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 5621
+      POSTGRES_DB: demo
     ports:
       - "55432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db_init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d demo"]
       interval: 5s
       timeout: 5s
       retries: 5
-      start_period: 10s
     networks:
-      - airtransportation_network
+      - aviation_network
 
   api:
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     container_name: aviation_api
     restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
       - ./:/app
+    env_file:
+      - .env.docker
     environment:
       - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=demo
       - DB_USER=postgres
       - DB_PASSWORD=5621
-      - DATABASE_URL=postgresql+asyncpg://postgres:5621@db:5432/demo
-      - PYTHONPATH=/app
-      - ENVIRONMENT=${ENVIRONMENT:-development}
-      - DEBUG=${DEBUG:-True}
+      
+      - ENVIRONMENT=development
+      - DEBUG=True
+      
     depends_on:
       db:
         condition: service_healthy
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        sleep 2 &&
+        echo 'Database URL:' &&
+        python -c 'from app.config.settings import settings; print(settings.get_dsn)' &&
+        echo 'Starting application...' &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
     networks:
-      - airtransportation_network
+      - aviation_network
 
 volumes:
   postgres_data:
-    name: airtransportation_data
+    name: my_postgres_data
 
 networks:
-  airtransportation_network:
-    name: airtransportation_network
+  aviation_network:
+    name: aviation_network
     driver: bridge

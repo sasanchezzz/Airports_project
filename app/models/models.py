@@ -1,6 +1,7 @@
 import random
 
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import (
     DateTime,
@@ -265,11 +266,6 @@ class TicketFlights(Base):
     """
 
     __tablename__ = "ticket_flights"
-    UniqueConstraint(
-        "ticket_no",
-        "flight_id",
-        name="ticket_flights_ticket_no_flight_id_key",
-    )
 
     ticket_no: Mapped[str] = mapped_column(
         String(13),
@@ -305,20 +301,6 @@ class TicketFlights(Base):
         cascade="all, delete-orphan",
     )
 
-    # flight: Mapped["Flights"] = relationship(
-    #     "Flights",
-    #     back_populates="ticket_flights",
-    # )
-    # ticket: Mapped["Tickets"] = relationship(
-    #     "Tickets",
-    #     back_populates="ticket_flights",
-    # )
-    # boarding_passes: Mapped[list["BoardingPasses"]] = relationship(
-    #     "BoardingPasses",
-    #     foreign_keys="BoardingPasses.ticket_no",
-    #     back_populates="ticket_flight",
-    # )
-
 
 class BoardingPasses(Base):
     """
@@ -326,34 +308,34 @@ class BoardingPasses(Base):
     """
 
     __tablename__ = "boarding_passes"
-    ForeignKeyConstraint(
-        ["ticket_no", "flight_id"],
-        [
-            "bookings.ticket_flights.ticket_no",
-            "bookings.ticket_flights.flight_id",
-        ],
-        name="fk_boarding_passes_ticket_flights",
+    __table_args__: Any = (
+        ForeignKeyConstraint(
+            ["ticket_no", "flight_id"],
+            [
+                "bookings.ticket_flights.ticket_no",
+                "bookings.ticket_flights.flight_id",
+            ],
+            name="boarding_passes_ticket_no_fkey",
+        ),
+        UniqueConstraint(
+            "flight_id",
+            "boarding_no",
+            name="boarding_passes_flight_id_boarding_no_key",
+        ),
+        UniqueConstraint(
+            "flight_id",
+            "seat_no",
+            name="boarding_passes_flight_id_seat_no_key",
+        ),
+        {"schema": "bookings"},
     )
-    UniqueConstraint(
-        "flight_id",
-        "boarding_no",
-        name="boarding_passes_flight_id_boarding_no_key",
-    )
-    UniqueConstraint(
-        "flight_id",
-        "seat_no",
-        name="boarding_passes_flight_id_seat_no_key",
-    )
-
     ticket_no: Mapped[str] = mapped_column(
         String(13),
-        # ForeignKey("bookings.ticket_flights.ticket_no"),
         primary_key=True,
         nullable=False,
     )
     flight_id: Mapped[int] = mapped_column(
         Integer,
-        # ForeignKey("bookings.ticket_flights.flight_id"),
         primary_key=True,
         nullable=False,
     )
@@ -365,20 +347,5 @@ class BoardingPasses(Base):
 
     ticket_flight: Mapped["TicketFlights"] = relationship(
         "TicketFlights",
-        foreign_keys=[ticket_no, flight_id],
         back_populates="boarding_passes",
-        viewonly=True,
     )
-
-    # ticket_flight: Mapped["TicketFlights"] = relationship(
-    #     "TicketFlights",
-    #     # foreign_keys=[
-    #     #     "BoardingPasses.ticket_no",
-    #     #     "BoardingPasses.flight_id",
-    #     # ],
-    #     foreign_keys=[
-    #         ticket_no,
-    #         flight_id,
-    #     ],
-    #     back_populates="boarding_passes",
-    # )

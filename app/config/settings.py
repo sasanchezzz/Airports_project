@@ -5,13 +5,13 @@ from pydantic_settings import (
 
 
 class DatabaseSettings(BaseSettings):
-
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        env_prefix="DB_",
+        env_prefix="",
         case_sensitive=False,
         extra="ignore",
+        env_nested_delimiter="__",
     )
 
     DB_HOST: str = "localhost"
@@ -23,5 +23,6 @@ class DatabaseSettings(BaseSettings):
     @property
     def get_dsn(self) -> str:
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
 
 settings = DatabaseSettings()
