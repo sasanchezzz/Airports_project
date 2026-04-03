@@ -68,33 +68,6 @@ class QPAirports(ConditionsMixin):
     latitude: float | None = None
     timezone: str | None = None
 
-    @field_validator("timezone")
-    @classmethod
-    def validate_timezone(cls, tz_param: str) -> str:
-        """
-        Функция-валидотор для проверки формата часового пояса
-
-        Пример: "Континент/Город"
-
-        Слова начинаются с большой буквы, и разделены "/"
-
-        :param tz_param: Строка от пользователя
-        :type tz_param: str
-        :return: Провалидированная строка
-        :rtype: str
-
-        Raises:
-            ValueError: У переданной строки неверный формат
-        """
-        pattern = r"^[A-Z][a-z]+/[A-Z][a-z]+(?:_[A-Z][a-z]+)*$"
-
-        if not re.match(pattern, tz_param):
-            raise ValueError(
-                f"Invalid timezone format: {tz_param}. "
-                f'Expected format: "Continent/City", like "Europe/Moscow"'
-            )
-        return tz_param
-
 
 class AirportsUpsert(BaseModel):
     airport_code: str

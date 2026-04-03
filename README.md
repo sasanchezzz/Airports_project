@@ -36,6 +36,7 @@
 | ├── **`config/`** | Pydantic-settings настройки приложения |
 | ├── **`models/`** | SQLAlchemy модели для работы с БД |
 | ├── **`schemas/`** | Pydantic модели для валидации данных |
+| ├── **`db_init/`** | Инициализация базы данных для первого запуска |
 | ├── **db_connection.py** | Подключение к базе данных |
 | ├── **start.py** | Запуск приложения |
 | ├── **main.py** | Инициализация FastAPI и подключение роутеров |
@@ -49,7 +50,7 @@
 git clone https://github.com/sasanchezzz/Airports_project.git
 cd Airports_project
 ```
-2. Загрузите приложение через docker-compose
+2. Соберите приложение через docker-compose
 ```bash
 docker-compose up --build
 ```
@@ -61,3 +62,6 @@ python run start.py
 ```
 Откройте в браузере: http://localhost:8000/docs
 ```
+
+
+curl http://127.0.0.1:8000/api/v1/aircrafts/319

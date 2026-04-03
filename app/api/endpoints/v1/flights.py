@@ -30,7 +30,11 @@ async def get_airports(
 ) -> Page[FlightsResponse]:
     query_conditions = query.compose_conditions(Flights)
 
-    stmt = select(Flights).where(*query_conditions)
+    stmt = (
+        select(Flights)
+        .where(*query_conditions)
+        .order_by(Flights.flight_id)
+    )
 
     get_airports_result: Page[FlightsResponse] = await paginate(
         session,

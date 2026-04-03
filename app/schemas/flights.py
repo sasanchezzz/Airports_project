@@ -61,9 +61,9 @@ class FlightsResponse(BaseModel):
 
         aircraft_code: str - Код самолета, пример: "321"
 
-        actual_departure: datetime - Действительные дата и время отправления, пример: 2011-12-12 10:20:00+00
+        actual_departure: datetime | None - Действительные дата и время отправления, пример: 2011-12-12 10:20:00+00. Опциональное поле, которое может быть null.
 
-        actual_arrival: datetime - Действительные дата и время прибытия, пример: 2012-01-01 15:30:00+00
+        actual_arrival: datetime | None - Действительные дата и время прибытия, пример: 2012-01-01 15:30:00+00. Опциональное поле, которое может быть null.
     """
 
     flight_id: int
@@ -74,8 +74,8 @@ class FlightsResponse(BaseModel):
     arrival_airport: str
     status: str
     aircraft_code: str
-    actual_departure: datetime
-    actual_arrival: datetime
+    actual_departure: datetime | None
+    actual_arrival: datetime | None
 
 
 class FlightsRequestJoin(BaseModel):
