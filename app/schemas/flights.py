@@ -127,13 +127,13 @@ class FlightsResponseItem(ConditionsMixin):
 
     flight_no: str
     aircraft_code: str
+    range: int
+    model: str
     departure_airport: str
     departure_city: str
     arrival_airport: str
     arrival_city: str
     status: str
-    range: int
-    model: str
 
 
 class FlightsAnalyticsRequest(BaseModel):

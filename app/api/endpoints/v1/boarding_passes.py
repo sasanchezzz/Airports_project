@@ -15,19 +15,30 @@ boarding_passes_router = APIRouter(
 
 
 @boarding_passes_router.get(
-        "/{ticket_no}",
-        response_model=BoardingPassesResponse
-    )
+    "/{ticket_no}",
+    response_model=BoardingPassesResponse,
+    summary="Get information about boarding pass",
+    response_description="Boarding pass information",
+)
 async def get_ticket_info(
     ticket_no: str,
     session: AsyncSession = Depends(get_db),
 ) -> BoardingPasses:
-    query = (
-        select(BoardingPasses)
-        .where(
-            and_(
-                BoardingPasses.ticket_no == ticket_no,
-            )
+    """
+    Получение информации о посадочном талоне по номеру билета
+
+    Параметры запроса:
+    - **ticket_no**: уникальный код аэропорта
+
+    Параметры ответа:
+    - **flight_id**: id полета
+    - **boarding_no**: номер посадочного талона
+    - **seat_no**: номер места в самолете
+    """
+
+    query = select(BoardingPasses).where(
+        and_(
+            BoardingPasses.ticket_no == ticket_no,
         )
     )
 
@@ -36,8 +47,8 @@ async def get_ticket_info(
     ticket_info = result.scalar_one_or_none()
 
     if ticket_info is None:
-       raise HTTPException(
-                status_code=404,
-                detail=f"Boarding pass with ticket number {ticket_no} - not found"
-            )
+        raise HTTPException(
+            status_code=404,
+            detail=f"Boarding pass with ticket number {ticket_no} - not found",
+        )
     return ticket_info

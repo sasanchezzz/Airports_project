@@ -22,12 +22,44 @@ v1_flights_router = APIRouter(
 )
 
 
-@v1_flights_router.get("/", response_model=Page[FlightsResponse])
-async def get_airports(
+@v1_flights_router.get(
+    "/",
+    response_model=Page[FlightsResponse],
+    summary="Get paginated information about flights",
+    response_description="Flight information",
+)
+async def get_flights(
     query: QPFlights = Depends(),
     session: AsyncSession = Depends(get_db),
     pagination_params: Params = Depends(),
 ) -> Page[FlightsResponse]:
+    """
+    Получение информации о полете(ах) по нескольким параметрам, с пагинируемым ответом
+
+    Параметры запроса:
+    - **flight_no**: номер полета
+    - **scheduled_departure**: запланированные дата и время отправления
+    - **scheduled_arrival**: запланированные дата и время прибытия
+    - **departure_airport**: аэропорт отправления
+    - **arrival_airport**: аэропорт прибытия
+    - **status**: статус полета
+    - **aircraft_code**: код самолета
+    - **actual_departure**: действительные дата и время отправления
+    - **actual_arrival**: действительные дата и время прибытия
+
+    Параметры ответа:
+    - **flight_id**: id полета
+    - **flight_no**: номер полета
+    - **scheduled_departure**: запланированные дата и время отправления
+    - **scheduled_arrival**: запланированные дата и время прибытия
+    - **departure_airport**: аэропорт отправления
+    - **arrival_airport**: аэропорт прибытия
+    - **status**: статус полета
+    - **aircraft_code**: код самолета
+    - **actual_departure**: действительные дата и время отправления
+    - **actual_arrival**: действительные дата и время прибытия
+    """
+
     query_conditions = query.compose_conditions(Flights)
 
     stmt = (
@@ -36,22 +68,47 @@ async def get_airports(
         .order_by(Flights.flight_id)
     )
 
-    get_airports_result: Page[FlightsResponse] = await paginate(
+    get_flights_result: Page[FlightsResponse] = await paginate(
         session,
         stmt,
         pagination_params,
     )
-    return get_airports_result
+    return get_flights_result
 
 
 @v1_flights_router.get(
-    "/city_flights", response_model=Page[FlightsResponseItem]
+    "/city_flights",
+    response_model=Page[FlightsResponseItem],
+    summary="Get information about aircrafts for flights",
+    response_description="Flight and aircraft info",
 )
 async def get_city_flights(
     query: FlightsRequestJoin = Depends(),
     session: AsyncSession = Depends(get_db),
     pagination_params: Params = Depends(),
 ) -> Page[FlightsResponseItem]:
+    """
+    Получение информации о полете и самолете по нескольким параметрам, с пагинируемым ответом
+
+    Параметры запроса:
+    - **flight_no**: номер полета
+    - **departure_city**: город отправления
+    - **arrival_city**: город прибытия
+    - **status**: статус полета
+    - **range**: дальность полета самолета
+
+    Параметры ответа:
+    - **flight_no**: номер полета
+    - **airport_code**: уникальный код аэропорта
+    - **range**: дальность полета самолета
+    - **model**: модель самолета
+    - **departure_airport**: аэропорт отправления
+    - **departure_city**: город отправления
+    - **arrival_airports**: аэропорт прибытия
+    - **arrival_city**: город прибытия
+    - **status**: статус полета
+    """
+
     DeparureAirport = aliased(Airports)
     ArrivalAirport = aliased(Airports)
     AircraftsRange = aliased(Aircrafts)

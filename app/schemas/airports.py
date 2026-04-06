@@ -54,18 +54,12 @@ class QPAirports(ConditionsMixin):
 
         city: str | None - Город расположения аэропорта
 
-        longitude: float | None - Долгота
-
-        latitude: float | None - Широта
-
         timezone: str | None - Часовой пояс, пример: "Europe/Moscow"
     """
 
     airport_code: str | None = None
     airport_name: str | None = None
     city: str | None = None
-    longitude: float | None = None
-    latitude: float | None = None
     timezone: str | None = None
 
 
