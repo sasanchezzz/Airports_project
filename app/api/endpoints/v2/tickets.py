@@ -24,11 +24,35 @@ v2_tickets_router = APIRouter(
 
 
 @v2_tickets_router.post(
-    "/create_ticket", response_model=TicketsResponse
+    "/create_ticket",
+    response_model=TicketsResponse,
+    summary="Create new ticket",
+    response_description="Created ticket",
 )
 async def create_ticket(
     ticket: TicketsCreate, session: AsyncSession = Depends(get_db)
 ) -> Tickets:
+    """
+    Создание билета для клиента
+
+    Тело запроса:
+    - **book_ref**: уникальный код бронирования (без указания кода, генерируется новый)
+    - **passenger_id**: серия и номер паспорта клиента
+    - **passenger_name**: имя клиента (большими английскими буквами)
+    - **contact_data**: контактные данные клиента
+    - **phone**: номер телефона клиента
+    - **email**: электронная почта клиента
+
+    Параметры ответа:
+    - **ticket_no**: сгенерированный номер билета для клиента
+    - **book_ref**: уникальный код бронирования (без указания кода, генерируется новый)
+    - **passenger_id**: серия и номер паспорта клиента
+    - **passenger_name**: имя клиента (большими английскими буквами)
+    - **contact_data**: контактные данные клиента
+    - **phone**: номер телефона клиента
+    - **email**: электронная почта клиента
+    """
+
     async with session.begin():
         if ticket.book_ref:
             book_ref = ticket.book_ref
@@ -70,12 +94,40 @@ async def create_ticket(
     return new_ticket
 
 
-@v2_tickets_router.put("/{ticket_no}", response_model=TicketsResponse)
+@v2_tickets_router.put(
+    "/{ticket_no}",
+    response_model=TicketsResponse,
+    summary="Update ticket",
+    response_description="Updated ticket",
+)
 async def update_ticket(
     ticket_no: str,
     updated_ticket: TicketsUpdate,
     session: AsyncSession = Depends(get_db),
 ) -> Tickets:
+    """
+    Обновление данных билета, по переданному номеру
+
+    Параметры запроса:
+    - **ticket_no**: номер билета, который нужно обновить
+
+    Тело запроса:
+    - **passenger_id**: серия и номер паспорта клиента
+    - **passenger_name**: имя клиента (большими английскими буквами)
+    - **contact_data**: контактные данные клиента
+    - **phone**: номер телефона клиента
+    - **email**: электронная почта клиента
+
+    Параметры ответа:
+    - **ticket_no**: сгенерированный номер билета для клиента
+    - **book_ref**: уникальный код бронирования (без указания кода, генерируется новый)
+    - **passenger_id**: серия и номер паспорта клиента
+    - **passenger_name**: имя клиента (большими английскими буквами)
+    - **contact_data**: контактные данные клиента
+    - **phone**: номер телефона клиента
+    - **email**: электронная почта клиента
+    """
+
     ticket = await session.get(Tickets, ticket_no)
     if not ticket:
         raise HTTPException(
@@ -92,10 +144,24 @@ async def update_ticket(
     return ticket
 
 
-@v2_tickets_router.delete("/{ticket_no}", response_model=dict)
+@v2_tickets_router.delete(
+    "/{ticket_no}",
+    response_model=dict,
+    summary="Delete ticket",
+    response_description="Deleted ticket",
+)
 async def delete_ticket(
     ticket_no: str, session: AsyncSession = Depends(get_db)
 ) -> dict[str, str]:
+    """
+    Удаление билета по заданному номеру
+
+    Параметры запроса:
+    - **ticket_no**: номер билета, который нужно удалить
+
+    Параметры ответа:
+    - **message**: уведомление об успешном удалении билета с заданным номером
+    """
     stmt = await session.get(Tickets, ticket_no)
 
     if stmt is None:

@@ -16,26 +16,37 @@ v2_seats_router = APIRouter(
 )
 
 
-@v2_seats_router.get("/", response_model=Page[SeatsResponse])
-async def get_airports(
+@v2_seats_router.get(
+    "/",
+    response_model=Page[SeatsResponse],
+    summary="Get information about seat",
+    response_description="Seat information",
+)
+async def get_seats(
     query: QPSeats = Depends(),
     session: AsyncSession = Depends(get_db),
     pagination_params: Params = Depends(),
 ) -> Page[SeatsResponse]:
+    """
+    Получение информации о доступных местах в самолете
+
+    Тело запроса:
+    - **aircraft_code**: уникальный код самолета
+    - **fare_conditions**: категория места
+
+    Параметры ответа:
+    - **aircraft_code**: уникальный код самолета
+    - **seat_no**: номер места в самолете
+    - **fare_conditions**: категория места
+    """
+
     query_conditions = query.compose_conditions(Seats)
 
     stmt = select(Seats).where(*query_conditions)
 
-    get_airports_result: Page[SeatsResponse] = await paginate(
+    get_seats_result: Page[SeatsResponse] = await paginate(
         session,
         stmt,
         pagination_params,
     )
-    return get_airports_result
-
-    # if result_get_seat_info is None:
-    #     raise HTTPException(
-    #             status_code=404,
-    #             detail=f"Seat with number - {seat_no} not found"
-    #         )
-    # return get_seats_result
+    return get_seats_result

@@ -117,9 +117,6 @@ class TicketsCreate(BaseModel):
         if value is None:
             raise ValueError("Contact_data can't be empty!")
 
-        # if not isinstance(value, dict):
-        #     raise ValueError("Contact_data must be dictionary!")
-
         required_keys = {"email", "phone"}
         for key in value.keys():
             if key not in required_keys:

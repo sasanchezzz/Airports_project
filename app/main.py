@@ -13,5 +13,13 @@ app.include_router(router_v2)
 
 add_pagination(app)
 
-@app.get("/health")
-def health() -> dict[str, bool]: return {"ok": True}
+
+@app.get("/health", summary="Check health of server")
+def health() -> dict[str, bool]:
+    """
+    Проверка отклика от сервера
+
+    Параметры ответа:
+    - **ok**: уведомление о работоспособности сервера
+    """
+    return {"ok": True}

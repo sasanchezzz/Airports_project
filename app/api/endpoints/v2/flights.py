@@ -17,13 +17,37 @@ from app.schemas.flights import (
 v2_flights_router = APIRouter(prefix="/flights", tags=["v2/flights"])
 
 
-@v2_flights_router.get("/analytics", response_model=TopRouteResponse)
+@v2_flights_router.get(
+    "/analytics",
+    response_model=TopRouteResponse,
+    summary="Get analytics about flights",
+    response_description="Analytics info",
+)
 async def get_flights_anlytics(
     query: FlightsAnalyticsRequest = Depends(),
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
     session: AsyncSession = Depends(get_db),
 ) -> TopRouteResponse:
+    """
+    Получение аналитики за указанный период времени, с пагинируемым ответом
+
+    Тело запроса:
+    - **date_from**: начальная дата
+    - **date_to**: конечная дата
+
+    Параметры ответа:
+    - **period**: временной промежуток для аналитики
+    - **top_routes**: список с данными по популярному(ым) маршруту(ам)
+    - **route**: аэропорт отпраления - аэропорт прибытия
+    - **departure_city**: город отправления
+    - **arrival_city**: город прибытия
+    - **flights_count**: количество полетов по маршруту
+    - **passengers**: количество пассажиров
+    - **avg_load_factor**: значение загруженности маршрута
+    - **revenue**: доход по маршруту
+    """
+
     DepartureAirport = aliased(Airports)
     ArrivalAirport = aliased(Airports)
 

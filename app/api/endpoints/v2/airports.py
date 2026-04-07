@@ -19,12 +19,31 @@ v2_airports_router = APIRouter(
 
 
 @v2_airports_router.post(
-    "/upsert", response_model=AirportsUpsertResponse
+    "/upsert",
+    response_model=AirportsUpsertResponse,
+    summary="Upsert new airport",
+    response_description="Upserted airport",
 )
 async def airports_upsert(
     airports: list[AirportsUpsert],
     session: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
+    """
+    Создание и обновление нескольких аэропортов по заданным параметрам
+
+    Тело запроса:
+    - **airport_code**: уникальный код самолета
+    - **airport_name**: уникальный код самолета
+    - **city**: модель самолета
+    - **longitude**: максимальная дальность полета самолета
+    - **latitude**: максимальная дальность полета самолета
+    - **timezone**: максимальная дальность полета самолета
+
+    Параметры ответа:
+    - **message**: уведомление об успешном внесении данных
+    - **airports**: список внесенных данных о самолетах из тела запроса
+    """
+
     airports_data = [airport.model_dump() for airport in airports]
 
     stmt = await session.execute(
@@ -55,10 +74,25 @@ async def airports_upsert(
     }
 
 
-@v2_airports_router.delete("/{airport_code}", response_model=dict)
+@v2_airports_router.delete(
+    "/{airport_code}",
+    response_model=dict,
+    summary="Delete airport",
+    response_description="Deleted airport",
+)
 async def delete_airport(
     airport_code: str, session: AsyncSession = Depends(get_db)
 ) -> dict[str, str]:
+    """
+    Удаление аэропорта по заданному коду
+
+    Параметры запроса:
+    - **airport_code**: код аэропорта, который нужно удалить
+
+    Параметры ответа:
+    - **message**: уведомление об успешном удалении аэропорта с заданным кодом
+    """
+
     stmt = await session.get(Airports, airport_code)
 
     if stmt is None:
