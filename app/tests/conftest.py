@@ -7,7 +7,7 @@ from collections.abc import (
 )
 from typing import Any
 
-from fastapi.testclient import TestClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -96,10 +96,10 @@ async def session(
         await session.rollback()
 
 
-@pytest.fixture
-def test_client(
+@pytest_asyncio.fixture
+async def async_client(
     engine: AsyncEngine,
-) -> Generator[TestClient, None, None]:
+) -> AsyncGenerator[AsyncClient, None]:
     """
     Создание тестового клиента FastAPI с переопределением зависимости get_db
     """
@@ -116,6 +116,10 @@ def test_client(
 
     app.dependency_overrides[get_db] = override_get_db
 
-    with TestClient(app) as test_client:
-        yield test_client
+    transport = ASGITransport(app=app)
+    async with AsyncClient(
+        transport=transport, base_url="http://test"
+    ) as client:
+        yield client
+
     app.dependency_overrides.clear()

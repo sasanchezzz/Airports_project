@@ -17,39 +17,18 @@ from app.models.models import (
 
 
 @pytest_asyncio.fixture
-async def test_aircrafts(session: AsyncSession) -> list[Aircrafts]:
+async def test_aircrafts(session: AsyncSession) -> Aircrafts:
     """
     Создание тестовых данных для таблицы Aircrafts
     """
-    aircrafts = [
-        Aircrafts(
-            aircraft_code="773", model="Boeing 777-300", range=11100
-        ),
-        Aircrafts(
-            aircraft_code="763", model="Boeing 767-300", range=7900
-        ),
-        Aircrafts(
-            aircraft_code="SU9",
-            model="Sukhoi SuperJet-100",
-            range=3000,
-        ),
-        Aircrafts(
-            aircraft_code="320", model="Airbus A320-200", range=5700
-        ),
-        Aircrafts(
-            aircraft_code="321", model="Airbus A321-200", range=5600
-        ),
-    ]
+    aircraft = Aircrafts(
+        aircraft_code="773", model="Boeing 777-300", range=11100
+    )
 
-    for aircraft in aircrafts:
-        session.add(aircraft)
-
+    session.add(aircraft)
     await session.commit()
-
-    for aircraft in aircrafts:
-        await session.refresh(aircraft)
-
-    return aircrafts
+    await session.refresh(aircraft)
+    return aircraft
 
 
 @pytest_asyncio.fixture
