@@ -37,7 +37,7 @@ def event_loop_session() -> Generator[Any, Any, Any]:
 
 
 @pytest.fixture(scope="session")
-def postgres_container() -> Iterator[str]:
+def postgres_container() -> Iterator[PostgresContainer]:
     """
     Запускает PostgreSQL-контейнер для тестов
     """
@@ -48,7 +48,7 @@ def postgres_container() -> Iterator[str]:
         yield postgres
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture
 async def engine(
     postgres_container: PostgresContainer,
 ) -> AsyncGenerator[AsyncEngine, None]:

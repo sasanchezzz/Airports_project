@@ -1,7 +1,6 @@
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import pytest
 import pytest_asyncio
 
 from app.models.models import Aircrafts
@@ -22,7 +21,6 @@ async def test_aircrafts(session: AsyncSession) -> Aircrafts:
     return aircraft
 
 
-@pytest.mark.asyncio
 class TestReadAircraft:
     """
     Тесты для GET /aircrafts/{aircraft_code}
@@ -42,7 +40,7 @@ class TestReadAircraft:
         - Соответствие полей модели
         """
         response = await async_client.get(
-            f"/aircrafts/{test_aircrafts.aircraft_code}"
+            f"/api/v1/aircrafts/{test_aircrafts.aircraft_code}"
         )
 
         assert response.status_code == 200
@@ -52,6 +50,19 @@ class TestReadAircraft:
         assert data["model"] == test_aircrafts.model
         assert data["range"] == test_aircrafts.range
 
-        assert "aircraft_code" in data
-        assert "model" in data
-        assert "range" in data
+    async def test_read_aircraft_not_found(
+        self,
+        async_client: AsyncClient,
+    ) -> None:
+        """
+        Тест получения информации о несуществующем самолете.
+
+        Проверяет:
+        - Статус код 404
+        - Наличие сообщения об ошибке
+        """
+        response = await async_client.get("/api/v1/aircrafts/XXX")
+
+        assert response.status_code == 404
+        data = response.json()
+        assert "detail" in data
