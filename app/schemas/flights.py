@@ -1,8 +1,32 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
+from typing import Annotated
 
-from pydantic import BaseModel
+from pydantic import BaseModel, BeforeValidator
 
 from app.schemas.mixin import ConditionsMixin
+
+
+def parse_flexible_datetime(
+    value: str | datetime | None,
+) -> datetime | None:
+    """Парсит строку в datetime, None пропускает."""
+    if value is None or isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        iso_str = value.replace(" ", "T")
+        dt = datetime.fromisoformat(iso_str)
+        if dt.tzinfo is None:
+            # считаем, что дата без зоны — это UTC
+            dt = dt.replace(tzinfo=timezone.utc)
+        else:
+            dt = dt.astimezone(timezone.utc)
+        return dt
+    raise ValueError(f"Неподдерживаемый тип для даты: {type(value)}")
+
+
+FlexibleDatetime = Annotated[
+    datetime | None, BeforeValidator(parse_flexible_datetime)
+]
 
 
 class QPFlights(ConditionsMixin):
@@ -31,14 +55,14 @@ class QPFlights(ConditionsMixin):
     """
 
     flight_no: str | None = None
-    scheduled_departure: datetime | None = None
-    scheduled_arrival: datetime | None = None
+    scheduled_departure: FlexibleDatetime = None
+    scheduled_arrival: FlexibleDatetime = None
     departure_airport: str | None = None
     arrival_airport: str | None = None
     status: str | None = None
     aircraft_code: str | None = None
-    actual_departure: datetime | None = None
-    actual_arrival: datetime | None = None
+    actual_departure: FlexibleDatetime = None
+    actual_arrival: FlexibleDatetime = None
 
 
 class FlightsResponse(BaseModel):
