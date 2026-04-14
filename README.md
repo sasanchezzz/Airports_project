@@ -7,7 +7,7 @@ REST API для управления данными авиаперевозок. 
 ```bash
 git clone https://github.com/sasanchezzz/Airports_project.git
 cd Airports_project
-docker-compose up --build
+docker compose up --build
 ```
 
 Откройте [http://localhost:8000/docs](http://localhost:8000/docs) для интерактивной документации.
@@ -42,7 +42,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ## Запуск тестов
 
 ```bash
-docker-compose run --rm api pytest
+docker compose run --rm api pytest
 ```
 
 Или локально:
@@ -70,7 +70,7 @@ curl http://localhost:8000/api/v1/aircrafts/773
 curl http://localhost:8000/api/v1/airports/
 
 # Фильтр по городу
-curl http://localhost:8000/api/v1/airports/?city=Москва
+curl http://localhost:8000/api/v1/airports/?city=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0&page=1&size=50
 ```
 
 **GET** `/api/v1/boarding_passes/{ticket_no}` — посадочный талон по номеру билета
@@ -96,7 +96,7 @@ curl http://localhost:8000/api/v1/flights/?status=On%20Time&page=1&size=20
 **GET** `/api/v1/flights/city_flights` — рейсы с городами вылета/прилёта
 ```bash
 # Фильтр по городу вылета
-curl "http://localhost:8000/api/v1/flights/city_flights?departure_city=Москва"
+curl http://localhost:8000/api/v1/flights/city_flights?departure_city=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0
 
 # Фильтр по городу вылета и статусу полета
 curl http://localhost:8000/api/v1/flights/city_flights?departure_city=%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE%D0%B4%D0%B0%D1%80&status=Scheduled&page=1&size=20
