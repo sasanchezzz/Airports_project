@@ -85,7 +85,9 @@ class TestGetAirports:
         assert data["total"] == 2
 
         svo = next(
-            item for item in data["items"] if item["airport_code"] == "SVO"
+            item
+            for item in data["items"]
+            if item["airport_code"] == "SVO"
         )
         assert svo["airport_name"] == "Шереметьево"
         assert svo["city"] == "Москва"
@@ -101,7 +103,7 @@ class TestGetAirports:
 
         Проверяет:
         - Статус код 200
-        - Фильтрация по airport_code возвращает только匹配的 результат
+        - Фильтрация по airport_code возвращает только результат
         """
         response = await async_client.get(
             "/api/v1/airports/", params={"airport_code": "LED"}

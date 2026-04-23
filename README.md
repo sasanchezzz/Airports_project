@@ -36,7 +36,13 @@ docker compose up --build
 uv sync
 
 # Запуск сервера
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+python start.py
+```
+
+При необходимости параметры запуска можно переопределить:
+
+```bash
+APP_HOST=0.0.0.0 APP_PORT=8000 APP_RELOAD=true python start.py
 ```
 
 ## Запуск тестов

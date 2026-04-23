@@ -19,6 +19,7 @@ class DatabaseSettings(BaseSettings):
     DB_NAME: str = "demo"
     DB_USER: str = "postgres"
     DB_PASSWORD: str = "5621"
+    DB_ECHO: bool = False
 
     @property
     def get_dsn(self) -> str:
