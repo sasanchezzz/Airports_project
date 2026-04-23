@@ -1,7 +1,7 @@
 [project]
 name = "airports-project"
 version = "0.1.0"
-description = "Add your description here"
+description = "API для взаимодействия с базой данных 'Авиаперевозки'"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -31,7 +31,7 @@ exclude = ["venv", ".venv", "alembic"]
 minversion = "7.0"
 pythonpath = ["."]
 python_classes = ["Test*"]
-testpaths = ["tests"]
+testpaths = ["app/tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
 asyncio_mode = "auto"
@@ -44,7 +44,7 @@ addopts = [
 ]
 
 [tool.coverage.run]
-source = ["api"]
+source = ["app"]
 omit = ["*/test_*", "*/__pycache__/*"]
 
 [tool.ruff]
