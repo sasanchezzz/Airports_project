@@ -11,17 +11,18 @@ from app.config.settings import settings
 
 db_engine = create_async_engine(
     url=settings.get_dsn,
-    echo=True,
+    echo=settings.DB_ECHO,
 )
 
-Async_session_local = async_sessionmaker(
+async_session_local = async_sessionmaker(
     bind=db_engine,
     class_=AsyncSession,
     expire_on_commit=False,
 )
 
+
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    async with Async_session_local() as session:
+    async with async_session_local() as session:
         try:
             yield session
         finally:
